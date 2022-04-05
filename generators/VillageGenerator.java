@@ -4,7 +4,7 @@ import com.shourya.customvillage.VillageGeneratorConfig;
 import com.shourya.customvillage.generators.area.AreaAllocator;
 import com.shourya.customvillage.generators.area.AreaContext;
 import com.shourya.customvillage.generators.path.PathGenerator;
-import com.shourya.customvillage.util.Utils;
+import com.shourya.Utils;
 
 import java.util.Arrays;
 import java.util.List;

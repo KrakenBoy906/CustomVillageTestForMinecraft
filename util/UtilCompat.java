@@ -3,31 +3,7 @@ package com.shourya.customvillage.util;
 import java.awt.*;
 import java.io.*;
 
-public class Utils {
-    public static void drawArr(int[][] arr, int width, int height, Graphics g) {
-        for (int i = 0; i < width; i ++) {
-            for (int j = 0; j < height; j ++) {
-                //System.out.println("drawing : " + i + " " + j + " : " + arr[i][j]);
-                g.setColor(new Color((arr[i][j] + 64) * 255 / 376, (arr[i][j] + 64) * 255 / 376, (arr[i][j] + 64) * 255 / 376));
-                g.drawRect(i, j, 1, 1);
-            }
-        }
-    }
-    public static void drawArr(int[][] arr, Graphics g, DrawingType T) {
-        for (int i = 0; i < arr.length; i ++) {
-            for (int j = 0; j < arr[i].length; j ++) {
-                if (T == DrawingType.GRAYSCALE)
-                    g.setColor(new Color((arr[i][j] + 64) * 255 / 376, (arr[i][j] + 64) * 255 / 376, (arr[i][j] + 64) * 255 / 376));
-                else if (T == DrawingType.RANDOMCOLOR)
-                    g.setColor(getColorFromValue(arr[i][j]));
-                else if (T == DrawingType.ONLY_1_AS_BLACK) {
-                    if (arr[i][j] != 1) continue;
-                    else g.setColor(Color.BLACK);
-                }
-                g.drawRect(i, j, 1, 1);
-            }
-        }
-    }
+public class UtilCompat {
 
     public static int[][] scaleArr(int[][] arr, double widthMultiplier, double heightMultiplier) {
         int[][] newArr = new int[(int)(arr.length * widthMultiplier)][];
@@ -140,10 +116,5 @@ public class Utils {
         Color c = new Color(Math.min(R + contrast, 255), Math.min(G + contrast, 255), Math.min(B + contrast, 255));
         return c;
     }
-
-    public static enum DrawingType {
-        GRAYSCALE,
-        RANDOMCOLOR,
-        ONLY_1_AS_BLACK
-    }
 }
+
