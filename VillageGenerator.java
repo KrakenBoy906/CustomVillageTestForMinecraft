@@ -1,4 +1,4 @@
-package com.shourya.customvillage.generators;
+package com.shourya.customvillage;
 
 import com.shourya.customvillage.VillageGeneratorConfig;
 import com.shourya.customvillage.generators.area.AreaAllocator;

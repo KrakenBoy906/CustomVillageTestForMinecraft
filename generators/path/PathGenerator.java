@@ -1,7 +1,7 @@
 package com.shourya.customvillage.generators.path;
 
 
-import com.shourya.customvillage.generators.VillageGenerator;
+import com.shourya.customvillage.VillageGenerator;
 import com.shourya.customvillage.datatypes.Vector2f;
 
 import java.awt.*;
