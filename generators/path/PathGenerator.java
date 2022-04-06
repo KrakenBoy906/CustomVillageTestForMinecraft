@@ -18,8 +18,6 @@ public class PathGenerator {
     List<PathCreatorPoint> progressingPoints;
     Random random;
 
-    Canvas canvas;
-
     VillageGenerator parent;
 
 
@@ -53,10 +51,6 @@ public class PathGenerator {
         progressingPoints.add(new PathCreatorPoint(initPoint, PathCreatorPoint.ProgressType.STRAIGHT, PathCreatorPoint.ProgressDirection.EAST, 1, 50));
         progressingPoints.add(new PathCreatorPoint(initPoint, PathCreatorPoint.ProgressType.STRAIGHT, PathCreatorPoint.ProgressDirection.WEST, 1, 50));
         progressingPoints.add(new PathCreatorPoint(initPoint, PathCreatorPoint.ProgressType.STRAIGHT, PathCreatorPoint.ProgressDirection.SOUTH, 1, 50));
-    }
-
-    public void bindCanvas(Canvas canvas) {
-        this.canvas = canvas;
     }
 
     public int[][] getPathMap() {

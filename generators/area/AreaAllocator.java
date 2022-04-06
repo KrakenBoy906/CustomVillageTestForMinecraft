@@ -18,8 +18,6 @@ public class AreaAllocator {
 
     private Random random;
 
-    private Canvas c;
-
     public AreaAllocator(int areaAllocationWidth, int areaAllocationHeight, int areaBlockDim, int noOfAreas, long seed) throws IllegalArgumentException
     {
         if (areaAllocationWidth <= 0 && areaAllocationHeight <= 0 && areaBlockDim <= 0 && noOfAreas <= 0)

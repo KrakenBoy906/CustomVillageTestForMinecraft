@@ -4,7 +4,7 @@ import com.shourya.customvillage.VillageGeneratorConfig;
 import com.shourya.customvillage.generators.area.AreaAllocator;
 import com.shourya.customvillage.generators.area.AreaContext;
 import com.shourya.customvillage.generators.path.PathGenerator;
-import com.shourya.Utils;
+import com.shourya.customvillage.util.UtilCompat;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,21 +24,21 @@ public class VillageGenerator {
 
     public VillageGeneratorConfig config;
 
-    int width;
-    int height;
+    public int spanningWidth;
+    public int spanningHeight;
 
 
     public VillageGenerator(int width, int height, String seedString) throws IllegalArgumentException {
         if (!seedString.matches("[0-9]+"))
             throw new IllegalArgumentException("seed cannot contain any special character");
         breakSeed(seedString);
-        this.width = width;
-        this.height = height;
+        this.spanningWidth = width;
+        this.spanningHeight = height;
     }
 
     public VillageGenerator(int width, int height, VillageGeneratorConfig config) throws IllegalArgumentException {
-        this.width = width;
-        this.height = height;
+        this.spanningWidth = width;
+        this.spanningHeight = height;
         this.config = config;
     }
 
@@ -56,15 +56,15 @@ public class VillageGenerator {
     }
 
     public void allocateArea() {
-        areaAllocator = new AreaAllocator(width, height, config.areaAllocationBlockDim, config.noOfAreas, config.areaAllocatorSeed);
+        areaAllocator = new AreaAllocator(spanningWidth, spanningHeight, config.areaAllocationBlockDim, config.noOfAreas, config.areaAllocatorSeed);
         areaAllocator.process();
         areas = areaAllocator.getAreas();
         areaConcentrationMap = areaAllocator.getAreaBlockMap();
-        areaAllocationMap = Utils.scaleArr3(areaConcentrationMap, config.areaAllocationBlockDim, config.areaAllocationBlockDim);
+        areaAllocationMap = UtilCompat.scaleArr3(areaConcentrationMap, config.areaAllocationBlockDim, config.areaAllocationBlockDim);
     }
 
     public void generatePaths() {
-        pathGenerator = new PathGenerator(this, width, height, config.pathGeneratorSeed);
+        pathGenerator = new PathGenerator(this, spanningWidth, spanningHeight, config.pathGeneratorSeed);
         pathGenerator.progress();
         pathMap = pathGenerator.getPathMap();
     }

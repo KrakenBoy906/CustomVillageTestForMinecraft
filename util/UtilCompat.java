@@ -2,6 +2,7 @@ package com.shourya.customvillage.util;
 
 import java.awt.*;
 import java.io.*;
+import com.shourya.customvillage.datatypes.Color;
 
 public class UtilCompat {
 
