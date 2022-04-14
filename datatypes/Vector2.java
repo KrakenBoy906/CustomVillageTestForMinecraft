@@ -50,16 +50,16 @@ public class Vector2 {
 	
 	public void translateUptoLimit(int tx, int ty, Bound limit) {
 		if (x + tx >= limit.p2.x)
-			translate(limit.p2.x, 0);
+			x = limit.p2.x - 1;
 		else if (x + tx < limit.p1.x)
-			translate(limit.p1.x, 0);
+			x = limit.p1.x;
 		else
 			translate(tx, 0);
 			
 		if (y + ty >= limit.p2.y)
-			translate(0, limit.p2.y);
+			y = limit.p2.y - 1;
 		else if (y + ty < limit.p1.y)
-			translate(0, limit.p1.y);
+			y = limit.p1.y;
 		else
 			translate(0, ty);
 	}
@@ -72,6 +72,10 @@ public class Vector2 {
         int dx = x - other.x;
         int dy = y - other.y;
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    public String toString() {
+        return "x : " + x + ", y : " + y;
     }
 
     public static enum Config {
