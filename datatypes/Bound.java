@@ -18,8 +18,27 @@ public class Bound {
     }
 
     public Bound(Vector2 p1, Vector2 p2) {
-        this.p1 = p1;
-        this.p2 = p2;
+		int lx, ux, ly, uy;
+		if (p1.x < p2.y) {
+			lx = p1.x;
+			ux = p2.x;
+		}
+		else {
+			lx = p2.x;
+			ux = p1.x;
+		}
+		if (p1.y < p2.y) {
+			ly = p1.y;
+			uy = p2.y;
+		}
+		else {
+			ly = p2.y;
+			uy = p1.y;
+		}
+		
+        this.p1 = new Vector2(lx, ly);
+        this.p2 = new Vector2(ux, uy);
+		
         center = new Vector2((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
         width = Math.abs(p2.x - p1.x);
         height = Math.abs(p2.x - p1.y);
