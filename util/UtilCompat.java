@@ -60,6 +60,81 @@ public class UtilCompat {
         return newArr;
     }
 
+    public static int[][] trimArrayWithValue(int[][] arr, int value) {
+        int columnStartsAt = 0;
+        int columnEndsAt = arr.length;
+
+        int rowStartsAt = 0;
+        int rowEndsAt = arr[arr.length - 1].length;
+
+        for (int i = 0; i < arr.length; i ++) {
+            boolean hasAnyImportantValue = false;
+            for (int j = 0; j < arr[i].length; j ++) {
+                if (arr[i][j] != value) {
+                    hasAnyImportantValue = true;
+                    break;
+                }
+            }
+            if (hasAnyImportantValue) {
+                columnStartsAt = i;
+                break;
+            }
+        }
+
+        for (int i = arr.length - 1; i >= 0; i --) {
+            boolean hasAnyImportantValue = false;
+            for (int j = 0; j < arr[i].length; j ++) {
+                if (arr[i][j] != value) {
+                    hasAnyImportantValue = true;
+                    break;
+                }
+            }
+            if (hasAnyImportantValue) {
+                columnEndsAt = i;
+                break;
+            }
+        }
+
+        for (int i = 0; i < arr.length; i ++) {
+            boolean hasAnyImportantValue = false;
+            for (int j = columnStartsAt; j <= columnEndsAt; j ++) {
+                if (arr[j][i] != value) {
+                    hasAnyImportantValue = true;
+                    break;
+                }
+            }
+            if (hasAnyImportantValue) {
+                rowStartsAt = i;
+                break;
+            }
+        }
+
+        for (int i = arr.length - 1; i >= 0; i --) {
+            boolean hasAnyImportantValue = false;
+            for (int j = columnStartsAt; j <= columnEndsAt; j ++) {
+                if (arr[j][i] != value) {
+                    hasAnyImportantValue = true;
+                    break;
+                }
+            }
+            if (hasAnyImportantValue) {
+                rowEndsAt = i;
+                break;
+            }
+        }
+
+        int[][] result = new int[columnEndsAt - columnStartsAt + 1][rowEndsAt - rowStartsAt + 1];
+
+        for (int i = columnStartsAt; i <= columnEndsAt; i ++) {
+            result[i - columnStartsAt] = new int[rowEndsAt - rowStartsAt + 1];
+            for (int j = rowStartsAt; j <= rowEndsAt; j ++) {
+                result[i - columnStartsAt][j - rowStartsAt] = arr[i][j];
+            }
+        }
+
+        return result;
+    }
+
     public static void arrayToFile(int[][] arr, String filePath) throws IOException {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < arr.length; i++)//for each row
