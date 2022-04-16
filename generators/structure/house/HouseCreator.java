@@ -3,14 +3,18 @@ import com.shourya.customvillage.datatypes.Bound;
 import com.shourya.customvillage.datatypes.Vector2;
 import com.shourya.customvillage.util.UtilCompat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class HouseCreator
 {
 	Random random;
 	HouseContext context;
-	
+
+	List<HouseModule> houseModules;
+
 	private int initialHouseShapeMatrixDim = 5;
 	private int finalHouseShapeMatrixXDim = 0;
 	private int finalHouseShapeMatrixYDim = 0;
@@ -21,6 +25,7 @@ public class HouseCreator
 	
 	public HouseCreator(HouseContext context) {
 		this.context = context;
+		houseModules = new ArrayList<>();
 		random = new Random();
 		xSymmetry = random.nextBoolean();
 		if (xSymmetry)
@@ -37,6 +42,7 @@ public class HouseCreator
 	
 	public void process() {
 		generateShapeMatrix();
+		generateModulesFromShapeMatrix_1();
 	}
 	
 	public void generateShapeMatrix() {
@@ -149,5 +155,75 @@ public class HouseCreator
 	private boolean isBlockConcavePositioned(int i, int j) {
 		return (i > 0 && i < initialHouseShapeMatrixDim - 1 && houseShapeMatrix[i - 1][j] == 1 && houseShapeMatrix[i + 1][j] == 1)
 				|| (j > 0 && j < initialHouseShapeMatrixDim - 1 && houseShapeMatrix[i][j - 1] == 1 && houseShapeMatrix[i][j + 1] == 1);
+	}
+
+	private void generateModulesFromShapeMatrix_1() {
+		Bound shapeBox = new Bound(new Vector2(Vector2.Config.ZERO), new Vector2(finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim));
+		Vector2 suitableGreatestValuePoint = new Vector2(Vector2.Config.ZERO);
+		Vector2 centerPoint = new Vector2(finalHouseShapeMatrixXDim / 2, finalHouseShapeMatrixYDim / 2);
+		for (int i = 0; i < houseShapeMatrix.length; i++) {
+			for (int j = 0; j < houseShapeMatrix[i].length; j++) {
+				if (houseShapeMatrix[i][j] > houseShapeMatrix[suitableGreatestValuePoint.x][suitableGreatestValuePoint.y]) {
+					suitableGreatestValuePoint = new Vector2(i, j);
+					System.out.println("modulation starting point changed to larger value at : " + suitableGreatestValuePoint);
+				} else if (houseShapeMatrix[i][j] == houseShapeMatrix[suitableGreatestValuePoint.x][suitableGreatestValuePoint.y]) {
+					Vector2 currPoint = new Vector2(i, j);
+					if (centerPoint.distance(suitableGreatestValuePoint) > centerPoint.distance(currPoint)) {
+						suitableGreatestValuePoint = new Vector2(currPoint);
+						System.out.println("modulation starting point changed because being nearer at : " + suitableGreatestValuePoint);
+					}
+				}
+			}
+		}
+		System.out.println("starting point for modualation found at : " + suitableGreatestValuePoint);
+
+		
+		Vector2 secondPoint = null;
+		
+		int tempSecondPointX;
+		int tempSecondPointY;
+
+		HouseModule.Direction direction = null;
+		
+		if (suitableGreatestValuePoint.x > 0) {
+			tempSecondPointX = suitableGreatestValuePoint.x - 1;
+			tempSecondPointY = suitableGreatestValuePoint.y;
+			secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
+			direction = HouseModule.Direction.LEFT;
+		}
+		
+		if (suitableGreatestValuePoint.x < finalHouseShapeMatrixXDim - 1) {
+			tempSecondPointX = suitableGreatestValuePoint.x + 1;
+			tempSecondPointY = suitableGreatestValuePoint.y;
+			if (secondPoint == null || houseShapeMatrix[tempSecondPointX][tempSecondPointY] > houseShapeMatrix[secondPoint.x][secondPoint.y]) {
+				secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
+				direction = HouseModule.Direction.RIGHT;
+			}
+		}
+
+		if (suitableGreatestValuePoint.y > 0) {
+			tempSecondPointX = suitableGreatestValuePoint.x;
+			tempSecondPointY = suitableGreatestValuePoint.y - 1;
+			if (secondPoint == null || houseShapeMatrix[tempSecondPointX][tempSecondPointY] > houseShapeMatrix[secondPoint.x][secondPoint.y]) {
+				secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
+				direction = HouseModule.Direction.UP;
+			}
+		}
+
+		if (suitableGreatestValuePoint.y < finalHouseShapeMatrixYDim - 1) {
+			tempSecondPointX = suitableGreatestValuePoint.x;
+			tempSecondPointY = suitableGreatestValuePoint.y + 1;
+			if (secondPoint == null || houseShapeMatrix[tempSecondPointX][tempSecondPointY] > houseShapeMatrix[secondPoint.x][secondPoint.y]) {
+				secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
+				direction = HouseModule.Direction.DOWN;
+			}
+		}
+
+		System.out.println("secondPoint = " + secondPoint);
+		System.out.println("direction = " + direction);
+	}
+
+	private void generateModulesFromShapeMatrix_2() {
+
 	}
 }

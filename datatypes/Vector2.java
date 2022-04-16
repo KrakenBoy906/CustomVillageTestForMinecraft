@@ -74,8 +74,14 @@ public class Vector2 {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    @Override
     public String toString() {
         return "x : " + x + ", y : " + y;
+    }
+
+    @Override
+    protected Vector2 clone() throws CloneNotSupportedException {
+        return new Vector2(this);
     }
 
     public static enum Config {

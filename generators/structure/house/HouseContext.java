@@ -4,12 +4,16 @@ public class HouseContext
 {
 	public static final int STANDARD_SEED_LENGTH = 16;
 	String seed;
+	public int initialShapeMatrixDimSeed = 2;
+	public int shapeOccupationSeed = 1;
 	public int width;
 	public int height;
+	public boolean houseSymmetryX = true;
+	public boolean houseSymmetryY = true;
 	public int groundFloorHeight;
 	public int otherThanGroundFloorHeight;
 	public int noOfFloors;
-	public int mainFloor;
+	public int mainFloorIndex;
 	public boolean hasMultipleEntryDoors;
 	public boolean hasEntryDoorCover;
 	public boolean hasMainFloorBalcony;
