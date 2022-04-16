@@ -62,10 +62,10 @@ public class UtilCompat {
 
     public static int[][] trimArrayWithValue(int[][] arr, int value) {
         int columnStartsAt = 0;
-        int columnEndsAt = arr.length;
+        int columnEndsAt = arr.length - 1;
 
         int rowStartsAt = 0;
-        int rowEndsAt = arr[arr.length - 1].length;
+        int rowEndsAt = arr[arr.length - 1].length - 1;
 
         for (int i = 0; i < arr.length; i ++) {
             boolean hasAnyImportantValue = false;

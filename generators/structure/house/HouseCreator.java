@@ -11,7 +11,7 @@ public class HouseCreator
 	Random random;
 	HouseContext context;
 	
-	private static final int initialHouseShapeMatrixDim = 5;
+	private int initialHouseShapeMatrixDim = 5;
 	private int finalHouseShapeMatrixXDim = 0;
 	private int finalHouseShapeMatrixYDim = 0;
 	public int[][] houseShapeMatrix;
@@ -27,6 +27,12 @@ public class HouseCreator
 			ySymmetry = random.nextBoolean();
 		else
 			ySymmetry = true;
+			
+		System.out.println("xSymmetry : " + xSymmetry + " " + "ySymmetry : " + ySymmetry);
+		
+		initialHouseShapeMatrixDim = 2 * random.nextInt(3) + 1;
+		
+		System.out.println("initialHouseShapeMatrixDim : " + initialHouseShapeMatrixDim);
 	}
 	
 	public void process() {
@@ -34,6 +40,8 @@ public class HouseCreator
 	}
 	
 	public void generateShapeMatrix() {
+		int noOfOccupation = (initialHouseShapeMatrixDim * initialHouseShapeMatrixDim) / (random.nextInt(2) + 2) + 1;
+		System.out.println("noOfOccupation : " + noOfOccupation);
 		houseShapeMatrix = new int[initialHouseShapeMatrixDim][initialHouseShapeMatrixDim];
 		for (int i = 0; i < initialHouseShapeMatrixDim; i ++) {
 			houseShapeMatrix[i] = new int[initialHouseShapeMatrixDim];
@@ -44,17 +52,18 @@ public class HouseCreator
 
 		Bound limit = new Bound(new Vector2(0, 0) , new Vector2(initialHouseShapeMatrixDim, initialHouseShapeMatrixDim));
 		
-		int noOfOccupiedBlocks = 0;
+		int noOfOccupiedBlocks = 1;
 		
-		while (noOfOccupiedBlocks < initialHouseShapeMatrixDim + random.nextInt(initialHouseShapeMatrixDim)) {
+		while (noOfOccupiedBlocks < noOfOccupation) {
 			int initX = random.nextInt(initialHouseShapeMatrixDim);
 			int initY = random.nextInt(initialHouseShapeMatrixDim);
 			while (houseShapeMatrix[initX][initY] != 0) {
+				System.out.println("initX : " + initX + ", " + "initY : " + initY + "; not eligible as houseMatrix value there is : " + houseShapeMatrix[initX][initY]);
 				initX = random.nextInt(initialHouseShapeMatrixDim);
 				initY = random.nextInt(initialHouseShapeMatrixDim);
 			}
 			Vector2 initPoint = new Vector2(initX, initY);
-			System.out.println(initPoint);
+			System.out.println("randomly placed on matrix : " + initPoint);
 			while (! isAdjacentToOccupiedShapeMatrixBlock(initPoint)) {
 				int chosenCoordinate = random.nextInt(2);
 				int chosenDirection = random.nextInt(3) - 1;
@@ -64,37 +73,42 @@ public class HouseCreator
 				else
 					initPoint.translateUptoLimit(0, chosenDirection, limit);
 			}
+			System.out.println("after settling the point for adjacency : " + initPoint);
 			noOfOccupiedBlocks ++;
 			manageAdjacencyDegree(initPoint);
 
 			Vector2 tempPoint = new Vector2(initPoint);
 				
 			if (xSymmetry && initPoint.x != initialHouseShapeMatrixDim / 2) {
+				System.out.println("taking care of x symmetry");
 				tempPoint.x = initialHouseShapeMatrixDim - tempPoint.x - 1;
 				manageAdjacencyDegree(tempPoint);
 				noOfOccupiedBlocks ++;
 			}
 			tempPoint = new Vector2(initPoint);
 			if (ySymmetry && initPoint.y != initialHouseShapeMatrixDim / 2) {
+				System.out.println("taking care of ysymmetry");
 				tempPoint.y = initialHouseShapeMatrixDim - initPoint.y - 1;
 				manageAdjacencyDegree(tempPoint);
 				noOfOccupiedBlocks ++;
 			}
 			if (xSymmetry && initPoint.x != initialHouseShapeMatrixDim / 2 && ySymmetry && initPoint.y != initialHouseShapeMatrixDim / 2) {
+				System.out.println("taking care of both symmetry");
 				tempPoint.x = initialHouseShapeMatrixDim - tempPoint.x - 1;
 				manageAdjacencyDegree(tempPoint);
 				noOfOccupiedBlocks ++;
 			}
 		}
 		
-		for (int i = 0; i < initialHouseShapeMatrixDim; i ++) {
+		/*for (int i = 0; i < initialHouseShapeMatrixDim; i ++) {
 			for (int j = 0; j < initialHouseShapeMatrixDim; j ++) {
 				if (isBlockConcavePositioned(i, j)) {
 					manageAdjacencyDegree(new Vector2(i, j));
 				}
 			}
-		}
-		houseShapeMatrix[initialHouseShapeMatrixDim / 2][initialHouseShapeMatrixDim / 2] --;
+		}*/
+		if (initialHouseShapeMatrixDim != 1)
+			houseShapeMatrix[initialHouseShapeMatrixDim / 2][initialHouseShapeMatrixDim / 2] --;
 		System.out.println("final matrix : ");
 		UtilCompat.printArray(houseShapeMatrix, System.out);
 		System.out.println("after trimming");
@@ -129,6 +143,7 @@ public class HouseCreator
 		}
 
 		UtilCompat.printArray(houseShapeMatrix, System.out);
+		System.out.println("--------------------");
 	}
 	
 	private boolean isBlockConcavePositioned(int i, int j) {
