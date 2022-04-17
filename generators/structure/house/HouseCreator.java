@@ -19,6 +19,8 @@ public class HouseCreator
 	private int finalHouseShapeMatrixXDim = 0;
 	private int finalHouseShapeMatrixYDim = 0;
 	public int[][] houseShapeMatrix;
+	
+	private int[][] moduleAllocationMatrix;
 
 	private boolean xSymmetry = true;
 	private boolean ySymmetry = true;
@@ -158,6 +160,7 @@ public class HouseCreator
 	}
 
 	private void generateModulesFromShapeMatrix_1() {
+		moduleAllocationMatrix = UtilCompat.createArr(finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim, 0);
 		Bound shapeBox = new Bound(new Vector2(Vector2.Config.ZERO), new Vector2(finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim));
 		Vector2 suitableGreatestValuePoint = new Vector2(Vector2.Config.ZERO);
 		Vector2 centerPoint = new Vector2(finalHouseShapeMatrixXDim / 2, finalHouseShapeMatrixYDim / 2);
@@ -179,11 +182,11 @@ public class HouseCreator
 
 		
 		Vector2 secondPoint = null;
+		HouseModule.Direction direction = null;
 		
 		int tempSecondPointX;
 		int tempSecondPointY;
 
-		HouseModule.Direction direction = null;
 		
 		if (suitableGreatestValuePoint.x > 0) {
 			tempSecondPointX = suitableGreatestValuePoint.x - 1;
@@ -221,6 +224,22 @@ public class HouseCreator
 
 		System.out.println("secondPoint = " + secondPoint);
 		System.out.println("direction = " + direction);
+		
+		HouseModule mainModule = new HouseModule(suitableGreatestValuePoint, direction);
+		
+		System.out.println("before expanding : " + mainModule);
+		
+		mainModule.lengthExpand(0, 0, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
+		
+		System.out.println("after expanding : " + mainModule);
+		
+		houseModules.add(mainModule);
+		
+		HouseModule mirrorModule = mainModule.mirror(xSymmetry, ySymmetry, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
+		
+		System.out.println("mirror module : " + mirrorModule);
+		
+		houseModules.add(mirrorModule);
 	}
 
 	private void generateModulesFromShapeMatrix_2() {

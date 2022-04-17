@@ -1,10 +1,32 @@
 package com.shourya.customvillage.util;
 
-import java.awt.*;
-import java.io.*;
 import com.shourya.customvillage.datatypes.Color;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.Arrays;
 
 public class UtilCompat {
+	
+	public static int[][] createArr(int length, int width, int value) throws IllegalArgumentException{
+		if (length == Integer.MAX_VALUE || length < 1 || width == Integer.MAX_VALUE || width < 1) {
+			throw new IllegalArgumentException("unsupported parameters");
+		}
+		
+		int[][] arr = new int[length][width];
+		
+		for (int i = 0; i < length; i ++) {
+			arr[i] = new int[width];
+			Arrays.fill(arr[i], 0);
+		}
+		
+		return arr;
+	}
 
     public static int[][] scaleArr(int[][] arr, double widthMultiplier, double heightMultiplier) {
         int[][] newArr = new int[(int)(arr.length * widthMultiplier)][];
