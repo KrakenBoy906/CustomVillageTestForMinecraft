@@ -231,7 +231,11 @@ public class HouseCreator
 		
 		mainModule.lengthExpand(0, 0, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
 		
-		System.out.println("after expanding : " + mainModule);
+		System.out.println("after length expanding : " + mainModule);
+		
+		mainModule.widthExpand(0, 0, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
+		
+		System.out.println("after width expanding : " + mainModule);
 		
 		houseModules.add(mainModule);
 		

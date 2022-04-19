@@ -142,8 +142,134 @@ public class HouseModule {
 		}
 	}
 	
-	public void boxExpand(Vector2 basePoint) {
-		
+	public void widthExpand(int extremety1Value, int extremety2Value, int[][] refMatrix, int refMatrixLength, int refMatrixWidth) {
+		boolean extremetyValueFound = false;
+
+		if (direction == Direction.LEFT) {
+
+			extremetyValueFound = false;
+			while (startPoint.y - 1 >= 0 && ! extremetyValueFound) {
+				for (int j = 0; j < length; j ++) {
+					if (refMatrix[startPoint.x - j][startPoint.y - 1] == extremety1Value) {
+						extremetyValueFound = true;
+						break;
+					}
+				}
+				if (!extremetyValueFound) {
+					startPoint.translate(0, -1);
+					width ++;
+				}
+			}
+
+			extremetyValueFound = false;
+			while (startPoint.y + width < refMatrixWidth && ! extremetyValueFound) {
+				for (int j = 0; j < length; j ++) {
+					if (refMatrix[startPoint.x - j][startPoint.y + width] == extremety2Value) {
+						extremetyValueFound = true;
+						break;
+					}
+				}
+				if (!extremetyValueFound)
+					width ++;
+			}
+		}
+
+		else if (direction == Direction.RIGHT) {
+
+			extremetyValueFound = false;
+			while (startPoint.y - 1 >= 0 && ! extremetyValueFound) {
+				for (int j = 0; j < length; j ++) {
+					if (refMatrix[startPoint.x + j][startPoint.y - 1] == extremety1Value) {
+						extremetyValueFound = true;
+						break;
+					}
+				}
+				if (!extremetyValueFound) {
+					startPoint.translate(0, -1);
+					width ++;
+				}
+			}
+
+			extremetyValueFound = false;
+			while (startPoint.y + width < refMatrixWidth && ! extremetyValueFound) {
+				for (int j = 0; j < length; j ++) {
+					if (refMatrix[startPoint.x + j][startPoint.y + width] == extremety2Value) {
+						extremetyValueFound = true;
+						break;
+					}
+				}
+				if (!extremetyValueFound) {
+					width ++;
+				}
+			}
+		}
+
+		else if (direction == Direction.UP) {
+
+			extremetyValueFound = false;
+			while (startPoint.x - width >= 0 && ! extremetyValueFound) {
+				for (int j = 0; j < length; j ++) {
+					if (refMatrix[startPoint.x - width][startPoint.y - j] == extremety1Value) {
+						extremetyValueFound = true;
+						break;
+					}
+				}
+				if (!extremetyValueFound)
+					width ++;
+			}
+
+			extremetyValueFound = false;
+			while (startPoint.x + 1 < refMatrixWidth && ! extremetyValueFound) {
+				for (int j = 0; j < length; j ++) {
+					if (refMatrix[startPoint.x + 1][startPoint.y - j] == extremety2Value) {
+						extremetyValueFound = true;
+						break;
+					}
+				}
+				if (!extremetyValueFound) {
+					width ++;
+					startPoint.translate(1, 0);
+				}
+			}
+		}
+
+		else if (direction == Direction.DOWN) {
+
+			extremetyValueFound = false;
+			while (startPoint.x - width >= 0 && ! extremetyValueFound) {
+				for (int j = 0; j < length; j ++) {
+					if (refMatrix[startPoint.x - width][startPoint.y + j] == extremety1Value) {
+						extremetyValueFound = true;
+						break;
+					}
+				}
+				if (!extremetyValueFound)
+					width ++;
+			}
+
+			extremetyValueFound = false;
+			while (startPoint.x + 1 < refMatrixLength && ! extremetyValueFound) {
+				for (int j = 0; j < width; j ++) {
+					if (refMatrix[startPoint.x - width][startPoint.y + j] == extremety2Value) {
+						extremetyValueFound = true;
+						break;
+					}
+				}
+				if (!extremetyValueFound)
+					width ++;
+			}
+		}
+	}
+	
+	public void boxExpand(int extremetyValue, int[][] refMatrix, int refMatrixLength, int refMatrixWidth, boolean lengthFirst) {
+		if (lengthFirst) {
+			lengthExpand(extremetyValue, extremetyValue, refMatrix, refMatrixLength, refMatrixWidth);
+			widthExpand(extremetyValue, extremetyValue, refMatrix, refMatrixLength, refMatrixWidth);
+		}
+		else {
+			widthExpand(extremetyValue, extremetyValue, refMatrix, refMatrixLength, refMatrixWidth);
+			lengthExpand(extremetyValue, extremetyValue, refMatrix, refMatrixLength, refMatrixWidth);
+		}
 	}
 	
 	public HouseModule mirror(boolean xSymmetry, boolean ySymmetry, int[][] refMatrix, int refMatrixLength, int refMatrixWidth) throws IllegalArgumentException {
