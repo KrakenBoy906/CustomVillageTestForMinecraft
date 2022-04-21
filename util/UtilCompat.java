@@ -156,6 +156,16 @@ public class UtilCompat {
 
         return result;
     }
+    
+    public static int[][] copyArray(int[][] arr) {
+        int[][] outputArr = new int[arr.length][];
+        for (int i = 0; i < arr.length; i ++) {
+            outputArr[i] = new int[arr[i].length];
+            System.arraycopy(arr, 0, outputArr, 0, arr[i].length);
+        }
+        
+        return outputArr;
+    }
 
     public static void arrayToFile(int[][] arr, String filePath) throws IOException {
         StringBuilder builder = new StringBuilder();

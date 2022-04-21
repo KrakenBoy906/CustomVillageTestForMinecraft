@@ -1,6 +1,7 @@
 package com.shourya.customvillage.generators.structure.house;
 
 import com.shourya.customvillage.datatypes.Vector2;
+import com.shourya.customvillage.datatypes.Bound;
 
 public class HouseModule {
     public Vector2 startPoint;
@@ -272,30 +273,77 @@ public class HouseModule {
 		}
 	}
 	
-	public HouseModule mirror(boolean xSymmetry, boolean ySymmetry, int[][] refMatrix, int refMatrixLength, int refMatrixWidth) throws IllegalArgumentException {
-		if (xSymmetry && ySymmetry) {
-			return new HouseModule(new Vector2(refMatrixLength - startPoint.x - 1, refMatrixWidth - startPoint.y - 1), length, width, getReverseDirection(direction));
-		}
+	public boolean intersects(HouseModule other) {
+		Bound b1 = getBound();
+		Bound b2 = other.getBound();
 		
-		else if (xSymmetry) {
-			if (direction == Direction.LEFT || direction == Direction.RIGHT) {
-				return new HouseModule(new Vector2(refMatrixLength - startPoint.x - 1, startPoint.y), length, width, getReverseDirection(direction));
+		return b1.intersects(b2);
+	}
+	
+	public Bound getBound() {
+		Bound bound;
+		
+		switch(direction) {
+			case UP : {
+				bound = new Bound(startPoint, new Vector2(startPoint.x + width, startPoint.y - length));
+				break;
 			}
-			return new HouseModule(new Vector2(refMatrixLength - startPoint.x - 1, startPoint.y), length, width, direction);
-		}
-		
-		else if (ySymmetry) {
-			if (direction == Direction.UP || direction == Direction.DOWN) {
-				return new HouseModule(new Vector2(startPoint.x, refMatrixWidth - startPoint.y - 1), length, width, getReverseDirection(direction));
+			case DOWN : {
+				bound = new Bound(startPoint, new Vector2(startPoint.x + width, startPoint.y + length));
+				break;
 			}
-			return new HouseModule(new Vector2(startPoint.x, refMatrixWidth - startPoint.y - 1), length, width, direction);
+			case LEFT : {
+				bound = new Bound(startPoint, new Vector2(startPoint.x + width, startPoint.y - length));
+				break;
+			}
+			default : {
+				bound = new Bound(startPoint, new Vector2(startPoint.x + width, startPoint.y + length));
+				break;
+			}
+		}
+		return bound;
+	}
+	
+	public HouseModule mirror(boolean xSymmetry, boolean ySymmetry, int[][] refMatrix, int refMatrixLength, int refMatrixWidth) {
+		
+		HouseModule houseModule = this.copy();
+		
+		if (xSymmetry) {
+			houseModule.startPoint.x = refMatrixLength - houseModule.startPoint.x - 1;
+			if (houseModule.direction == Direction.UP || houseModule.direction == Direction.DOWN) {
+				if (houseModule.startPoint.x < refMatrixLength / 2)
+					houseModule.startPoint.translate(-houseModule.width + 1, 0);
+				else if (houseModule.startPoint.x > refMatrixLength / 2)
+					houseModule.startPoint.translate(houseModule.width - 1, 0);
+			}
+			else {
+				houseModule.direction = getReverseDirection(houseModule.direction);
+			}
 		}
 		
-		else throw new IllegalArgumentException("cannot mirror module with both symmetry parameters false");
+		if (ySymmetry) {
+			houseModule.startPoint.y = refMatrixWidth - houseModule.startPoint.y - 1;
+			if (houseModule.direction == Direction.LEFT || houseModule.direction == Direction.RIGHT) {
+				if (houseModule.startPoint.y < refMatrixWidth / 2)
+					houseModule.startPoint.translate(0, -houseModule.width + 1);
+				else if (houseModule.startPoint.x > refMatrixWidth / 2)
+					houseModule.startPoint.translate(0, houseModule.width - 1);
+			}
+			else {
+				houseModule.direction = getReverseDirection(houseModule.direction);
+			}
+		}
+		
+		return houseModule;
 	}
 	
 	public HouseModule copy() {
 		return new HouseModule(startPoint, length, width, direction);
+	}
+
+	public boolean equals(HouseModule other)
+	{
+		return startPoint.equals(other.startPoint) && direction == other.direction && length == other.length && width == other.width;
 	}
 
 	@Override

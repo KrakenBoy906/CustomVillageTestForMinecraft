@@ -73,6 +73,10 @@ public class Vector2 {
         int dy = y - other.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
+	
+	public boolean equals(Vector2 other) {
+		return x == other.x && y == other.y;
+	}
 
     @Override
     public String toString() {

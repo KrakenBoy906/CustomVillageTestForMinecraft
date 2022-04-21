@@ -124,6 +124,7 @@ public class HouseCreator
 		finalHouseShapeMatrixXDim = houseShapeMatrix.length;
 		finalHouseShapeMatrixYDim = houseShapeMatrix[0].length;
 		UtilCompat.printArray(houseShapeMatrix, System.out);
+        moduleAllocationMatrix = UtilCompat.copyArray(houseShapeMatrix);
 	}
 
 	private boolean isAdjacentToOccupiedShapeMatrixBlock(Vector2 pos) {
@@ -160,93 +161,155 @@ public class HouseCreator
 	}
 
 	private void generateModulesFromShapeMatrix_1() {
-		moduleAllocationMatrix = UtilCompat.createArr(finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim, 0);
-		Bound shapeBox = new Bound(new Vector2(Vector2.Config.ZERO), new Vector2(finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim));
-		Vector2 suitableGreatestValuePoint = new Vector2(Vector2.Config.ZERO);
 		Vector2 centerPoint = new Vector2(finalHouseShapeMatrixXDim / 2, finalHouseShapeMatrixYDim / 2);
-		for (int i = 0; i < houseShapeMatrix.length; i++) {
-			for (int j = 0; j < houseShapeMatrix[i].length; j++) {
-				if (houseShapeMatrix[i][j] > houseShapeMatrix[suitableGreatestValuePoint.x][suitableGreatestValuePoint.y]) {
-					suitableGreatestValuePoint = new Vector2(i, j);
-					System.out.println("modulation starting point changed to larger value at : " + suitableGreatestValuePoint);
-				} else if (houseShapeMatrix[i][j] == houseShapeMatrix[suitableGreatestValuePoint.x][suitableGreatestValuePoint.y]) {
-					Vector2 currPoint = new Vector2(i, j);
-					if (centerPoint.distance(suitableGreatestValuePoint) > centerPoint.distance(currPoint)) {
-						suitableGreatestValuePoint = new Vector2(currPoint);
-						System.out.println("modulation starting point changed because being nearer at : " + suitableGreatestValuePoint);
+		Bound shapeBox = new Bound(new Vector2(Vector2.Config.ZERO), new Vector2(finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim));
+		int noOfShapeBlockAllocated = 0;
+		
+		while (noOfShapeBlockAllocated < finalHouseShapeMatrixXDim * finalHouseShapeMatrixYDim) {
+		
+			Vector2 suitableGreatestValuePoint = new Vector2(Vector2.Config.ZERO);
+			for (int i = 0; i < houseShapeMatrix.length; i++) {
+				for (int j = 0; j < houseShapeMatrix[i].length; j++) {
+					if (houseShapeMatrix[i][j] > houseShapeMatrix[suitableGreatestValuePoint.x][suitableGreatestValuePoint.y]) {
+						suitableGreatestValuePoint = new Vector2(i, j);
+						System.out.println("modulation starting point changed to larger value at : " + suitableGreatestValuePoint);
+					}
+					else if (houseShapeMatrix[i][j] == houseShapeMatrix[suitableGreatestValuePoint.x][suitableGreatestValuePoint.y]) {
+						Vector2 currPoint = new Vector2(i, j);
+						if (centerPoint.distance(suitableGreatestValuePoint) > centerPoint.distance(currPoint)) {
+							suitableGreatestValuePoint = new Vector2(currPoint);
+							System.out.println("modulation starting point changed because being nearer at : " + suitableGreatestValuePoint);
+						}
 					}
 				}
 			}
-		}
-		System.out.println("starting point for modualation found at : " + suitableGreatestValuePoint);
+			System.out.println("starting point for modualation found at : " + suitableGreatestValuePoint);
 
 		
-		Vector2 secondPoint = null;
-		HouseModule.Direction direction = null;
+			Vector2 secondPoint = null;
+			HouseModule.Direction direction = HouseModule.Direction.LEFT;
 		
-		int tempSecondPointX;
-		int tempSecondPointY;
+			int tempSecondPointX;
+			int tempSecondPointY;
 
 		
-		if (suitableGreatestValuePoint.x > 0) {
-			tempSecondPointX = suitableGreatestValuePoint.x - 1;
-			tempSecondPointY = suitableGreatestValuePoint.y;
-			secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
-			direction = HouseModule.Direction.LEFT;
-		}
-		
-		if (suitableGreatestValuePoint.x < finalHouseShapeMatrixXDim - 1) {
-			tempSecondPointX = suitableGreatestValuePoint.x + 1;
-			tempSecondPointY = suitableGreatestValuePoint.y;
-			if (secondPoint == null || houseShapeMatrix[tempSecondPointX][tempSecondPointY] > houseShapeMatrix[secondPoint.x][secondPoint.y]) {
+			if (suitableGreatestValuePoint.x > 0) {
+				tempSecondPointX = suitableGreatestValuePoint.x - 1;
+				tempSecondPointY = suitableGreatestValuePoint.y;
 				secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
-				direction = HouseModule.Direction.RIGHT;
+				direction = HouseModule.Direction.LEFT;
+			}
+		
+			if (suitableGreatestValuePoint.x < finalHouseShapeMatrixXDim - 1) {
+				tempSecondPointX = suitableGreatestValuePoint.x + 1;
+				tempSecondPointY = suitableGreatestValuePoint.y;
+				if (secondPoint == null || houseShapeMatrix[tempSecondPointX][tempSecondPointY] > houseShapeMatrix[secondPoint.x][secondPoint.y]) {
+					secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
+					direction = HouseModule.Direction.RIGHT;
+				}
+			}
+
+			if (suitableGreatestValuePoint.y > 0) {
+				tempSecondPointX = suitableGreatestValuePoint.x;
+				tempSecondPointY = suitableGreatestValuePoint.y - 1;
+				if (secondPoint == null || houseShapeMatrix[tempSecondPointX][tempSecondPointY] > houseShapeMatrix[secondPoint.x][secondPoint.y]) {
+					secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
+					direction = HouseModule.Direction.UP;
+				}
+			}
+
+			if (suitableGreatestValuePoint.y < finalHouseShapeMatrixYDim - 1) {
+				tempSecondPointX = suitableGreatestValuePoint.x;
+				tempSecondPointY = suitableGreatestValuePoint.y + 1;
+				if (secondPoint == null || houseShapeMatrix[tempSecondPointX][tempSecondPointY] > houseShapeMatrix[secondPoint.x][secondPoint.y]) {
+					secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
+					direction = HouseModule.Direction.DOWN;
+				}
+			}
+
+			System.out.println("secondPoint = " + secondPoint);
+			System.out.println("direction = " + direction);
+		
+			HouseModule baseModule = new HouseModule(suitableGreatestValuePoint, direction);
+		
+			System.out.println("before expanding : " + baseModule);
+		
+			baseModule.lengthExpand(0, 0, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
+		
+			System.out.println("after length expanding : " + baseModule);
+		
+			baseModule.widthExpand(0, 0, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
+		
+			System.out.println("after width expanding : " + baseModule);
+		
+			houseModules.add(baseModule);
+            noOfShapeBlockAllocated += baseModule.length * baseModule.width;
+            eliminateModuledBlocksFromShapeMatrix(baseModule);
+		
+			if (xSymmetry) {
+				HouseModule xMirrorModule = baseModule.mirror(true, false, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
+				System.out.println("x mirror : " + xMirrorModule);
+				if (! xMirrorModule.equals(baseModule) && ! xMirrorModule.intersects(baseModule)) {
+					houseModules.add(xMirrorModule);
+					noOfShapeBlockAllocated += xMirrorModule.length * xMirrorModule.width;
+                    eliminateModuledBlocksFromShapeMatrix(xMirrorModule);
+                }
+			}
+			
+			if (ySymmetry) {
+				HouseModule yMirrorModule = baseModule.mirror(false, true, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
+				System.out.println("y mirror : " + yMirrorModule);
+				if (! yMirrorModule.equals(baseModule) && ! yMirrorModule.intersects(baseModule)) {
+					houseModules.add(yMirrorModule);
+					noOfShapeBlockAllocated += yMirrorModule.length * yMirrorModule.width;
+                    eliminateModuledBlocksFromShapeMatrix(yMirrorModule);
+				}
+			}
+			
+			if (xSymmetry && ySymmetry) {
+				HouseModule xyMirrorModule = baseModule.mirror(true, true, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
+				System.out.println("xy mirror : " + xyMirrorModule);
+				if (! xyMirrorModule.equals(baseModule) && ! xyMirrorModule.intersects(baseModule)) {
+					houseModules.add(xyMirrorModule);
+					noOfShapeBlockAllocated += xyMirrorModule.length * xyMirrorModule.width;
+                    eliminateModuledBlocksFromShapeMatrix(xyMirrorModule);
+				}
 			}
 		}
-
-		if (suitableGreatestValuePoint.y > 0) {
-			tempSecondPointX = suitableGreatestValuePoint.x;
-			tempSecondPointY = suitableGreatestValuePoint.y - 1;
-			if (secondPoint == null || houseShapeMatrix[tempSecondPointX][tempSecondPointY] > houseShapeMatrix[secondPoint.x][secondPoint.y]) {
-				secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
-				direction = HouseModule.Direction.UP;
-			}
-		}
-
-		if (suitableGreatestValuePoint.y < finalHouseShapeMatrixYDim - 1) {
-			tempSecondPointX = suitableGreatestValuePoint.x;
-			tempSecondPointY = suitableGreatestValuePoint.y + 1;
-			if (secondPoint == null || houseShapeMatrix[tempSecondPointX][tempSecondPointY] > houseShapeMatrix[secondPoint.x][secondPoint.y]) {
-				secondPoint = new Vector2(tempSecondPointX, tempSecondPointY);
-				direction = HouseModule.Direction.DOWN;
-			}
-		}
-
-		System.out.println("secondPoint = " + secondPoint);
-		System.out.println("direction = " + direction);
-		
-		HouseModule mainModule = new HouseModule(suitableGreatestValuePoint, direction);
-		
-		System.out.println("before expanding : " + mainModule);
-		
-		mainModule.lengthExpand(0, 0, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
-		
-		System.out.println("after length expanding : " + mainModule);
-		
-		mainModule.widthExpand(0, 0, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
-		
-		System.out.println("after width expanding : " + mainModule);
-		
-		houseModules.add(mainModule);
-		
-		HouseModule mirrorModule = mainModule.mirror(xSymmetry, ySymmetry, houseShapeMatrix, finalHouseShapeMatrixXDim, finalHouseShapeMatrixYDim);
-		
-		System.out.println("mirror module : " + mirrorModule);
-		
-		houseModules.add(mirrorModule);
 	}
 
 	private void generateModulesFromShapeMatrix_2() {
 
+	}
+	
+	private void eliminateModuledBlocksFromShapeMatrix(HouseModule houseModule) {
+		
+		switch(houseModule.direction) {
+			case LEFT : {
+				for (int i = 0; i < houseModule.length; i ++)
+					for (int j = 0; j < houseModule.width; j ++)
+						houseShapeMatrix[houseModule.startPoint.x - i][houseModule.startPoint.y + j] = 0;
+				break;
+			}
+			case RIGHT : {
+				for (int i = 0; i < houseModule.length; i ++)
+					for (int j = 0; j < houseModule.width; j ++)
+						houseShapeMatrix[houseModule.startPoint.x + i][houseModule.startPoint.y + j] = 0;
+				break;
+			}
+			case UP : {
+				for (int i = 0; i < houseModule.length; i ++)
+					for (int j = 0; j < houseModule.width; j ++)
+						houseShapeMatrix[houseModule.startPoint.x + j][houseModule.startPoint.y - i] = 0;
+				break;
+			}
+			case DOWN : {
+				for (int i = 0; i < houseModule.length; i ++)
+					for (int j = 0; j < houseModule.width; j ++)
+						houseShapeMatrix[houseModule.startPoint.x + j][houseModule.startPoint.y + i] = 0;
+				break;
+			}
+			default : break;
+		}
 	}
 }
