@@ -326,7 +326,7 @@ public class HouseModule {
 			if (houseModule.direction == Direction.LEFT || houseModule.direction == Direction.RIGHT) {
 				if (houseModule.startPoint.y < refMatrixWidth / 2)
 					houseModule.startPoint.translate(0, -houseModule.width + 1);
-				else if (houseModule.startPoint.x > refMatrixWidth / 2)
+				else if (houseModule.startPoint.y > refMatrixWidth / 2)
 					houseModule.startPoint.translate(0, houseModule.width - 1);
 			}
 			else {
@@ -345,6 +345,18 @@ public class HouseModule {
 	{
 		return startPoint.equals(other.startPoint) && direction == other.direction && length == other.length && width == other.width;
 	}
+    
+    public boolean equalsWithOrExceptDirection(HouseModule other, int refMatrixLength, int refMatrixWidth) {
+        if (this.equals(other))
+            return true;
+            
+        switch (direction) {
+            case LEFT : return other.direction == Direction.RIGHT && (other.startPoint.x == refMatrixLength - startPoint.x - 1) && other.startPoint.y == startPoint.y;
+            case RIGHT : return other.direction == Direction.LEFT && (other.startPoint.x == refMatrixLength - startPoint.x - 1) && other.startPoint.y == startPoint.y;
+            case UP : return other.direction == Direction.DOWN && (other.startPoint.y == refMatrixLength - startPoint.y - 1) && other.startPoint.x == startPoint.x;
+            default : return other.direction == Direction.RIGHT && (other.startPoint.y == refMatrixLength - startPoint.y - 1) && other.startPoint.x == startPoint.x;
+        }
+    }
 
 	@Override
 	public String toString()

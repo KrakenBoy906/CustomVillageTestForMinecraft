@@ -161,7 +161,10 @@ public class UtilCompat {
         int[][] outputArr = new int[arr.length][];
         for (int i = 0; i < arr.length; i ++) {
             outputArr[i] = new int[arr[i].length];
-            System.arraycopy(arr, 0, outputArr, 0, arr[i].length);
+            for (int j = 0; j < arr[i].length; j ++) {
+                outputArr[i][j] = arr[i][j];
+            }
+            //System.arraycopy(arr, 0, outputArr, 0, arr[i].length);
         }
         
         return outputArr;
